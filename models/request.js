@@ -1,4 +1,4 @@
-import { Schema, Types, model, models } from "mongoose";
+import mongoose, { Schema, Types, model } from "mongoose";
 
 const schema = new Schema({
     staus: {
@@ -6,18 +6,18 @@ const schema = new Schema({
         default: "pending",
         enum: ["pending", "accepted", "rejected"]
     },
-    sender:{
-        type:Types.ObjectId,
-        ref:'User',
-        required:true
+    sender: {
+        type: Types.ObjectId,
+        ref: 'User',
+        required: true
     },
-    receiver:{
-        type:Types.ObjectId,
-        ref:'User',
-        required:true
+    receiver: {
+        type: Types.ObjectId,
+        ref: 'User',
+        required: true
     },
-},{
-    timestamps:true
+}, {
+    timestamps: true
 })
 
-export const Request = models.Request || model('Request', schema)
+export const Request = mongoose.models.Request || model('Request', schema)
