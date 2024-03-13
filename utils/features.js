@@ -17,11 +17,11 @@ const connectDB = (uri) => {
 }
 
 const sendToken = (res, user, code, message) => {
-    const token=jwt.sign({_id:user._id},process.env.JWT_SECRET)
-    res.status(code).cookie('chat-app-token',token,cookieOptions).json({
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET)
+    res.status(code).cookie('chat-app-token', token, cookieOptions).json({
         success: true,
         message,
     })
 }
 
-export { connectDB, sendToken }
+export { connectDB, sendToken, cookieOptions }
