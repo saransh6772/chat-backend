@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 
 import userRoutes from './routes/user.js';
 import chatRoutes from './routes/chat.js';
+import { createUser } from './seeders/user.js';
 
 dotenv.config({
     path: './.env'
