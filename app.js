@@ -6,7 +6,7 @@ import cookieParser from 'cookie-parser';
 
 import userRoutes from './routes/user.js';
 import chatRoutes from './routes/chat.js';
-import { createUser } from './seeders/user.js';
+import { createGroupChat, createMessageInChat, createMessages, createSingleChat, createUser } from './seeders/samples.js';
 
 dotenv.config({
     path: './.env'
@@ -16,6 +16,12 @@ const uri = process.env.MONGO_URI;
 const port = process.env.PORT || 3000;
 
 connectDB(uri);
+
+// createUser(10)
+// createSingleChat(10)
+// createGroupChat(10)
+// createMessages(10)
+// createMessageInChat(10,'65f32761124c79b460a881dc')
 
 const app = express();
 

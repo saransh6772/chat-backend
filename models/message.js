@@ -14,7 +14,7 @@ const schema = new Schema({
     content: {
         type: String,
     },
-    avatar: [
+    attachments: [
         {
             public_id: {
                 type: String,

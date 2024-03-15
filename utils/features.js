@@ -12,6 +12,7 @@ const connectDB = (uri) => {
     mongoose.connect(uri, { dbName: 'Chat_App' }).then((data) => {
         console.log(`Connected to the database ${data.connection.host}`)
     }).catch((err) => {
+        console.log('Error:', err)
         throw err
     })
 }
@@ -28,4 +29,8 @@ const emitEvent = (req, event, users, data) => {
     console.log('Emitting event', event)
 }
 
-export { connectDB, sendToken, cookieOptions, emitEvent }
+const deleteFiles = async(files) => {
+    console.log('Deleting files', files)
+}
+
+export { connectDB, sendToken, cookieOptions, emitEvent, deleteFiles}
