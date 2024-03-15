@@ -1,8 +1,8 @@
 import express from 'express';
-import { getUser, login, logout, newUser, searchUser } from '../controllers/user.js';
+import { acceptRequest, getFriends, getNotifications, getUser, login, logout, newUser, searchUser, sendRequest } from '../controllers/user.js';
 import { singleAvatar } from '../middlewares/multer.js';
 import { isAuthenticated } from '../middlewares/auth.js';
-import { loginValidator, registerValidator, validateHandler } from '../lib/validators.js';
+import { acceptRequestValidator, loginValidator, registerValidator, sendRequestValidator, validateHandler } from '../lib/validators.js';
 
 const app = express.Router();
 
@@ -16,5 +16,9 @@ app.use(isAuthenticated)
 app.get('/me', getUser)
 app.get('/logout', logout)
 app.get('/search', searchUser)
+app.put('/send-request', sendRequestValidator(), validateHandler, sendRequest)
+app.put('/accept-request', acceptRequestValidator(), validateHandler, acceptRequest)
+app.get('/notifications', getNotifications)
+app.get('/friends', getFriends)
 
 export default app;
