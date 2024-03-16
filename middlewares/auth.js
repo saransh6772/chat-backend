@@ -11,4 +11,18 @@ const isAuthenticated = (req, res, next) => {
     next()
 }
 
-export { isAuthenticated }
+const isAdmin = (req, res, next) => {
+    const token = req.cookies['chat-app-admin-token']
+    if (!token) {
+        return next(new ErrorHandler('Only admin can access', 401))
+    }
+    const secretKey = jwt.verify(token, process.env.JWT_SECRET)
+    const adminSecretKey = process.env.ADMIN_SECRET_KEY
+    const isMatch = secretKey === adminSecretKey
+    if (!isMatch) {
+        next(new ErrorHandler('Invalid Secret Key', 401))
+    }
+    next()
+}
+
+export { isAuthenticated, isAdmin }

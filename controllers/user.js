@@ -1,12 +1,12 @@
 import { compare } from 'bcrypt';
-import { User } from '../models/user.js'
-import { Chat } from '../models/chat.js'
-import { Request } from '../models/request.js'
-import { cookieOptions, emitEvent, sendToken } from '../utils/features.js'
-import { ErrorHandler } from '../utils/utility.js';
-import { TryCatch } from '../middlewares/error.js';
 import { NEW_REQUEST, REFETCH_CHATS } from '../constants/event.js';
 import { getOtherMember } from '../lib/helper.js';
+import { TryCatch } from '../middlewares/error.js';
+import { Chat } from '../models/chat.js';
+import { Request } from '../models/request.js';
+import { User } from '../models/user.js';
+import { cookieOptions, emitEvent, sendToken } from '../utils/features.js';
+import { ErrorHandler } from '../utils/utility.js';
 
 const newUser = TryCatch(async (req, res, next) => {
     const { name, username, password, bio } = req.body;
@@ -46,9 +46,9 @@ const getUser = TryCatch(async (req, res, next) => {
     })
 })
 
-const logout = TryCatch(async (req, res) => {
+const logout = TryCatch(async (req, res, next) => {
     const { name } = req.query
-    return res.status(200).json({
+    return res.status(200).cookie('chat-app-token', '', { ...cookieOptions, maxAge: 0 }).json({
         success: true,
         message: name
     })
@@ -156,4 +156,5 @@ const getFriends = TryCatch(async (req, res) => {
     }
 })
 
-export { newUser, login, getUser, logout, searchUser, sendRequest, acceptRequest, getNotifications, getFriends }
+export { acceptRequest, getFriends, getNotifications, getUser, login, logout, newUser, searchUser, sendRequest };
+
