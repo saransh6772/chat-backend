@@ -10,10 +10,9 @@ import { ErrorHandler } from '../utils/utility.js';
 
 const newUser = TryCatch(async (req, res, next) => {
     const { name, username, password, bio } = req.body;
-    const avatar = {
-        public_id: "uykfv",
-        url: "kuyf"
-    }
+    const file = req.file
+    if (!file) return next(new ErrorHandler('Please upload avatar', 400))
+    const avatar = { url: file.path, public_id: file.filename }
     const user = await User.create({
         name,
         bio,
