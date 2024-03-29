@@ -1,36 +1,65 @@
-import mongoose from "mongoose"
-import jwt from 'jsonwebtoken'
+import mongoose from "mongoose";
+import jwt from "jsonwebtoken";
+import { v4 as uuid } from "uuid";
+import { v2 as cloudinary } from "cloudinary";
+import { getBase64, getSockets } from "../lib/helper.js";
 
 const cookieOptions = {
-    maxAge: 30 * 24 * 60 * 60 * 1000,
-    sameSite: 'none',
+    maxAge: 15 * 24 * 60 * 60 * 1000,
+    sameSite: "none",
+    httpOnly: true,
     secure: true,
-    httpOnly: true
-}
+};
 
 const connectDB = (uri) => {
-    mongoose.connect(uri, { dbName: 'Chat_App' }).then((data) => {
-        console.log(`Connected to the database ${data.connection.host}`)
-    }).catch((err) => {
-        console.log('Error:', err)
-        throw err
-    })
-}
+    mongoose.connect(uri, { dbName: "Chattu" }).then((data) => console.log(`Connected to DB: ${data.connection.host}`)).catch((err) => {
+        throw err;
+    });
+};
 
 const sendToken = (res, user, code, message) => {
-    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET)
-    res.status(code).cookie('chat-app-token', token, cookieOptions).json({
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
+    return res.status(code).cookie("chattu-token", token, cookieOptions).json({
         success: true,
+        user,
         message,
-    })
-}
+    });
+};
 
 const emitEvent = (req, event, users, data) => {
-    console.log('Emitting event', event)
-}
+    const io = req.app.get("io");
+    const usersSocket = getSockets(users);
+    io.to(usersSocket).emit(event, data);
+};
 
-const deleteFiles = async(files) => {
-    console.log('Deleting files', files)
-}
+const uploadFilesToCloudinary = async (files = []) => {
+    const uploadPromises = files.map((file) => {
+        return new Promise((resolve, reject) => {
+            cloudinary.uploader.upload(
+                getBase64(file), {
+                resource_type: "auto",
+                public_id: uuid(),
+            }, (error, result) => {
+                if (error) return reject(error);
+                resolve(result);
+            }
+            );
+        });
+    });
+    try {
+        const results = await Promise.all(uploadPromises);
+        const formattedResults = results.map((result) => ({
+            public_id: result.public_id,
+            url: result.secure_url,
+        }));
+        return formattedResults;
+    } catch (err) {
+        throw new Error("Error uploading files to cloudinary", err);
+    }
+};
 
-export { connectDB, sendToken, cookieOptions, emitEvent, deleteFiles}
+const deleteFilesFromCloudinary = async (public_ids) => {
+    // Delete files from cloudinary
+};
+
+export { connectDB, sendToken, cookieOptions, emitEvent, deleteFilesFromCloudinary, uploadFilesToCloudinary, };

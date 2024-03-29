@@ -1,18 +1,19 @@
-import express from 'express'
-import { getAdminData, getChats, getMessages, getStats, getUsers, login, logout } from '../controllers/admin.js'
-import { adminValidator, validateHandler } from '../lib/validators.js'
-import { isAdmin } from '../middlewares/auth.js'
+import express from "express";
+import { adminLogin, adminLogout, allChats, allMessages, allUsers, getAdminData, getDashboardStats, } from "../controllers/admin.js";
+import { adminLoginValidator, validateHandler } from "../lib/validators.js";
+import { adminOnly } from "../middlewares/auth.js";
+const app = express.Router();
 
-const app = express.Router()
+app.post("/verify", adminLoginValidator(), validateHandler, adminLogin);
+app.get("/logout", adminLogout);
 
-app.post('/login', adminValidator(), validateHandler, login)
-app.get('/logout', logout)
+// Only Admin Can Accecss these Routes
 
-app.use(isAdmin)
-app.get('/', getAdminData)
-app.get('/users', getUsers)
-app.get('/chats', getChats)
-app.get('/messages', getMessages)
-app.get('/stats', getStats)
+app.use(adminOnly);
+app.get("/", getAdminData);
+app.get("/users", allUsers);
+app.get("/chats", allChats);
+app.get("/messages", allMessages);
+app.get("/stats", getDashboardStats);
 
-export default app
+export default app;
