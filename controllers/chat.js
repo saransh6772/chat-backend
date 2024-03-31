@@ -134,7 +134,7 @@ const leaveGroup = TryCatch(async (req, res, next) => {
     emitEvent(req, ALERT, chat.members, { chatId, message: `User ${user.name} has left the group`, });
     return res.status(200).json({
         success: true,
-        message: "Leave Group Successfully",
+        message: "Left Group Successfully",
     });
 });
 
